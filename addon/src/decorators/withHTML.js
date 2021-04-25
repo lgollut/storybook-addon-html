@@ -9,12 +9,17 @@ export const withHTML = makeDecorator({
     setTimeout(() => {
       const channel = addons.getChannel();
       const rootSelector = parameters.root || '#root';
-      const root = document.querySelector(rootSelector);
-      let html = root ? root.innerHTML : `${rootSelector} not found.`;
+      const roots = document.querySelectorAll(rootSelector);
+
+      roots.forEach((el) => {
+        html += el.innerHTML;
+      })
+
       if (parameters.removeEmptyComments) {
         html = html.replace(/<!--\s*-->/g, '');
       }
-      channel.emit(EVENT_CODE_RECEIVED, { html, options: parameters });
+
+      channel.emit(EVENT_CODE_RECEIVED, { html: html ?? `${rootSelector} not found.`, options: parameters });
     }, 0);
     return storyFn(context);
   },
